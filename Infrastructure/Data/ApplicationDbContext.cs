@@ -14,7 +14,8 @@ namespace Infrastructure.Data
         {
         }
 
-         public DbSet<Villa>  Villas { get; set; }
+        public DbSet<Villa>  Villas { get; set; }
+        public DbSet<VillaNumber> villaNumbers { get; set; }
 
          protected override void OnModelCreating(ModelBuilder modelBuilder)
          {
@@ -50,6 +51,54 @@ namespace Infrastructure.Data
                      Price = 400,
                      Sqft = 750,
                  });
+
+            modelBuilder.Entity<VillaNumber>().HasData(
+                new VillaNumber
+                {
+                    Villa_Number = 101,
+                    VillaId = 1,
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 102,
+                    VillaId = 1,
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 103,
+                    VillaId = 1,
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 104,
+                    VillaId = 1,
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 201,
+                    VillaId = 2,
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 202,
+                    VillaId = 2,
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 203,
+                    VillaId = 2,
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 301,
+                    VillaId = 3,
+                },
+                new VillaNumber
+                {
+                    Villa_Number = 302,
+                    VillaId = 3,
+                }
+                );
          }
     }
 }
