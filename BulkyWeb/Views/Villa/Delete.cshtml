@@ -13,7 +13,7 @@
     <div class="card-body border p-4">
         <form method="POST" class="row">
             <input asp-for="@Model.Id" hidden />
-            <div class="p-3">
+            <div class="p-3 col-10">
                 <div class="form-floating py-2 colo-12">
                     <input disabled asp-for="@Model.Name" class="form-control border shadow" />
                     <label asp-for="Name" class="ms-2"></label>
@@ -56,6 +56,9 @@
                         </a>
                     </div>
                 </div>
+            </div>
+            <div class="col-2">
+                <img src="@Model.ImageUrl" width="100%" style="border-radius: 5px;border: 1px solid #bbb8b9" />
             </div>
         </form>
     </div>

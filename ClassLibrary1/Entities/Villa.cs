@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
@@ -17,6 +14,8 @@ namespace Domain.Entities
         [Display(Name = "Price per night")]
         public decimal Price { get; set; }
         public int Occupancy{ get; set; }
+        [NotMapped]
+        public IFormFile? Image{ get; set; }
         public string? ImageUrl { get; set; }
         public DateTime? CreatedDate{ get; set; }
         public DateTime? UpdatedDate{ get; set; }
