@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Interfaces;
+using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,15 +7,25 @@ namespace Web.Controllers
 {
     public class VillaController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork unitOfWork;
 
+        // private readonly ApplicationDbContext _context;
+
+        /*
         public VillaController(ApplicationDbContext context)
         {
             _context = context;
         }
+        */
+
+        public VillaController(IUnitOfWork unitOfWork)
+        {
+            this.unitOfWork = unitOfWork;
+        }
+
         public async Task<IActionResult> Index()
         {
-            var villas = _context.Villas.ToList();
+            var villas = unitOfWork.Villa.GetAll();
 
             return View(villas);
         }
@@ -34,8 +45,8 @@ namespace Web.Controllers
                 return View(obj);
             }
 
-            _context.Villas.Add(obj);
-            await _context.SaveChangesAsync();
+            unitOfWork.Villa.Add(obj);
+            unitOfWork.Villa.Save();
 
             TempData["success"] = "The villa has been created successfully";
             return RedirectToAction("Index", "Villa");
@@ -44,7 +55,7 @@ namespace Web.Controllers
 
         public IActionResult Update(int villaId)
         {
-            Villa? obj = _context.Villas.FirstOrDefault(x => x.Id == villaId);
+            Villa? obj = unitOfWork.Villa.GetVilla(x => x.Id == villaId);
 
             if(obj == null)
             {
@@ -63,8 +74,8 @@ namespace Web.Controllers
                 return View(obj);
             }
 
-            _context.Villas.Update(obj);
-            await _context.SaveChangesAsync();
+            unitOfWork.Villa.Update(obj);
+            unitOfWork.Villa.Save();
             TempData["success"] = "The villa has been updated successfully";
             return RedirectToAction("Index", "Villa");
         }
@@ -72,7 +83,7 @@ namespace Web.Controllers
 
         public IActionResult Delete(int villaId)
         {
-            Villa? obj = _context.Villas.FirstOrDefault(x => x.Id == villaId);
+            Villa? obj = unitOfWork.Villa.GetVilla(x => x.Id == villaId);
 
             if(obj == null)
             {
@@ -84,7 +95,7 @@ namespace Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(Villa obj)
         {
-            Villa? objFromDb = _context.Villas.FirstOrDefault(x => x.Id == obj.Id);
+            Villa? objFromDb = unitOfWork.Villa.GetVilla(x => x.Id == obj.Id);
 
             if (objFromDb is null)
             {
@@ -92,8 +103,8 @@ namespace Web.Controllers
                 return View();
             }
 
-            _context.Villas.Remove(objFromDb);
-            await _context.SaveChangesAsync();
+            unitOfWork.Villa.Remove(objFromDb);
+            unitOfWork.Villa.Save();
             TempData["success"] = "The villa has been delete successfully";
             return RedirectToAction("Index", "Villa");
         }

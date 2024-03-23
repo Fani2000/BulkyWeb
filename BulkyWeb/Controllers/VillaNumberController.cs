@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.Interfaces;
+using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -8,15 +9,16 @@ namespace Web.Controllers
 {
     public class VillaNumberController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork unitOfWork;
 
-        public VillaNumberController(ApplicationDbContext context)
+
+        public VillaNumberController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            this.unitOfWork = unitOfWork;
         }
         public async Task<IActionResult> Index()
         {
-            var villaNumbers = _context.villaNumbers.Include(x => x.Villa).ToList();
+            var villaNumbers = unitOfWork.VillaNumber.GetAll(includeProperties: "Villa").ToList();
 
             return View(villaNumbers);
         }
@@ -24,7 +26,7 @@ namespace Web.Controllers
         private void LoadVillaListItems ()
         {
 
-            IEnumerable<SelectListItem> list = _context.Villas.ToList().Select(x => new SelectListItem
+            IEnumerable<SelectListItem> list = unitOfWork.Villa.GetAll().Select(x => new SelectListItem
             {
                 Text = x.Name,
                 Value = x.Id.ToString()
@@ -35,9 +37,9 @@ namespace Web.Controllers
 
         public async Task<IActionResult> Create()
         {
-            // var villaNumbers = _context.villaNumbers.ToList();
+            // var villaNumbers = unitOfWork.villaNumbers.ToList();
             /* 
-            IEnumerable<SelectListItem> list = _context.Villas.ToList().Select(x => new SelectListItem
+            IEnumerable<SelectListItem> list = unitOfWork.Villas.ToList().Select(x => new SelectListItem
             {
                 Text = x.Name,
                 Value = x.Id.ToString()
@@ -54,7 +56,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Create(VillaNumber obj)
         {
 
-            bool isNumberUnique = _context.villaNumbers.Any(x => x.Villa_Number == obj.Villa_Number);
+            bool isNumberUnique = unitOfWork.VillaNumber.GetAny(x => x.Villa_Number == obj.Villa_Number);
 
             ModelState.Remove("Villa"); // Removes the prop you don't want to validate from your model
 
@@ -70,17 +72,17 @@ namespace Web.Controllers
                 TempData["error"] = "The villa Number already exists.";
                 return View(obj);
             }
-            _context.villaNumbers.Add(obj);
-            await _context.SaveChangesAsync();
+            unitOfWork.VillaNumber.Add(obj);
+            unitOfWork.VillaNumber.Save();
 
             TempData["success"] = "The villa Number has been created successfully";
-            return RedirectToAction("Index", "VillaNumber");
+            return RedirectToAction(nameof(Index), "VillaNumber");
 
         }
 
         public IActionResult Update(int villaNumberId)
         {
-            VillaNumber? obj = _context.villaNumbers.FirstOrDefault(x => x.Villa_Number == villaNumberId);
+            VillaNumber? obj = unitOfWork.VillaNumber.GetVilla(x => x.Villa_Number == villaNumberId);
 
             if (obj == null)
             {
@@ -103,17 +105,17 @@ namespace Web.Controllers
                 return View(obj);
             }
 
-            _context.villaNumbers.Update(obj);
-            await _context.SaveChangesAsync();
+            unitOfWork.VillaNumber.Update(obj);
+            unitOfWork.VillaNumber.Save();
 
             TempData["success"] = "The villa Number has been updated successfully";
-            return RedirectToAction("Index", "VillaNumber");
+            return RedirectToAction(nameof(Index), "VillaNumber");
         }
 
 
         public IActionResult Delete(int villaNumberId)
         {
-            VillaNumber? obj = _context.villaNumbers.FirstOrDefault(x => x.Villa_Number == villaNumberId);
+            VillaNumber? obj = unitOfWork.VillaNumber.GetVilla(x => x.Villa_Number == villaNumberId);
 
             if (obj == null)
             {
@@ -128,7 +130,7 @@ namespace Web.Controllers
         public async Task<IActionResult> Delete(VillaNumber obj)
         {
 
-            VillaNumber? objFromDb = _context.villaNumbers.FirstOrDefault(x => x.Villa_Number == obj.Villa_Number);
+            VillaNumber? objFromDb = unitOfWork.VillaNumber.GetVilla(x => x.Villa_Number == obj.Villa_Number);
 
             if (objFromDb is null)
             {
@@ -136,10 +138,10 @@ namespace Web.Controllers
                 return View();
             }
 
-            _context.villaNumbers.Remove(objFromDb);
-            await _context.SaveChangesAsync();
+            unitOfWork.VillaNumber.Remove(objFromDb);
+            unitOfWork.VillaNumber.Save();
             TempData["success"] = "The villa has been delete successfully";
-            return RedirectToAction("Index", "VillaNumber");
+            return RedirectToAction(nameof(Index), "VillaNumber");
         }
     }
 }
