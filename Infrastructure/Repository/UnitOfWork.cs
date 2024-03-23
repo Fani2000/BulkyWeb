@@ -16,11 +16,14 @@ namespace Infrastructure.Repository
 
         public IVillaNumberRepository VillaNumber { get; private set; }
 
+        public IAmenityRepository Amenity { get; private set; }
+
         public UnitOfWork(ApplicationDbContext db)
         {
             this.db = db; 
             Villa = new VillaRepository(db);
             VillaNumber = new VillaNumberRepository(db);
+            Amenity = new AmenityRepository(db);
         }
     }
 }
