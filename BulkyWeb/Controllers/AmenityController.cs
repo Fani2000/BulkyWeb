@@ -1,12 +1,15 @@
 ﻿using Application.Common.Interfaces;
+using Application.Common.Utility;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace Web.Controllers
 {
+    [Authorize(Roles = SD.ROLE_ADMIN)]
     public class AmenityController : Controller
     {
         private readonly IUnitOfWork unitOfWork;
